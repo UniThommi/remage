@@ -41,6 +41,14 @@ class RMGOpticalOutputScheme : public RMGVOutputScheme {
 
     std::unique_ptr<G4GenericMessenger> fMessenger;
     void DefineCommands();
+
+
+    G4int physVolRegister = 12131;
+    G4int materialRegister = 12132;
+
+    // Mappings: Physisches Volumen und Material
+    std::map<std::string, int> physVolumeMapping;
+    std::map<std::string, int> materialMapping;
 };
 
 #endif

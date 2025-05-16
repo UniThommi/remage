@@ -59,13 +59,48 @@ void RMGOpticalOutputScheme::AssignOutputNames(G4AnalysisManager* ana_man) {
         rmg_man->RegisterNtuple(det.second.uid, ana_man->CreateNtuple(ntuple_name, "Event data"));
     registered_ntuples.emplace(ntuple_name, id);
 
+    // /fix also setup tuples for unique identifier and location
     ana_man->CreateNtupleIColumn(id, "evtid");
     if (!fNtuplePerDetector) { ana_man->CreateNtupleIColumn(id, "det_uid"); }
     ana_man->CreateNtupleDColumn(id, "wavelength_in_nm");
     ana_man->CreateNtupleDColumn(id, "time_in_ns");
+    ana_man->CreateNtupleDColumn(id, "x_position_in_m");
+    ana_man->CreateNtupleDColumn(id, "y_position_in_m");
+    ana_man->CreateNtupleDColumn(id, "z_position_in_m");
+    ana_man->CreateNtupleDColumn(id, "x_momentum_direction");
+    ana_man->CreateNtupleDColumn(id, "y_momentum_direction");
+    ana_man->CreateNtupleDColumn(id, "z_momentum_direction");
+
+    ana_man->CreateNtupleIColumn(id, "nC_track_id");
+    ana_man->CreateNtupleDColumn(id, "nC_x_position_in_m");
+    ana_man->CreateNtupleDColumn(id, "nC_y_position_in_m");
+    ana_man->CreateNtupleDColumn(id, "nC_z_position_in_m");
+    ana_man->CreateNtupleIColumn(id, "nC_phys_vol_id");
+    ana_man->CreateNtupleIColumn(id, "nC_material_id");
+    ana_man->CreateNtupleDColumn(id, "nC_time_in_ns");
+    ana_man->CreateNtupleDColumn(id, "nC_gamma_total_energy_in_keV");
+    ana_man->CreateNtupleIColumn(id, "nC_flag_Ge77");
+    ana_man->CreateNtupleIColumn(id, "nC_gamma_amount");
+    ana_man->CreateNtupleDColumn(id, "gamma_x_momentum_direction");
+    ana_man->CreateNtupleDColumn(id, "gamma_y_momentum_direction");
+    ana_man->CreateNtupleDColumn(id, "gamma_z_momentum_direction");
+    ana_man->CreateNtupleDColumn(id, "gamma_kinetic_energy_in_keV");
 
     ana_man->FinishNtuple(id);
   }
+
+  // Speichern der Mappings
+  auto physVol = rmg_man->RegisterNtuple(physVolRegister,
+    ana_man->CreateNtuple("physVolumes", "physVolumes_name_mapping"));
+    ana_man->CreateNtupleIColumn(physVol, "physVolumesID");
+    ana_man->CreateNtupleSColumn(physVol, "physVolumeNames");
+    ana_man->FinishNtuple(physVol);
+
+    auto materials = rmg_man->RegisterNtuple(materialRegister,
+        ana_man->CreateNtuple("materials", "materials_name_mapping"));
+    ana_man->CreateNtupleIColumn(materials, "materialsID");
+    ana_man->CreateNtupleSColumn(materials, "materialNames");
+    ana_man->FinishNtuple(materials);
 }
 
 // invoked in RMGEventAction::EndOfEventAction()
@@ -104,13 +139,65 @@ void RMGOpticalOutputScheme::StoreEvent(const G4Event* event) {
 
       auto ntupleid = rmg_man->GetNtupleID(hit->detector_uid);
 
+      G4String nCPhysVol = hit->nC_phys_vol;
+      G4String nCMaterial = hit->nC_material;
+
+      if (physVolumeMapping.find(nCPhysVol) == physVolumeMapping.end()) {
+        const G4int physicalVolumeMappingID = physVolumeMapping.size();
+        physVolumeMapping.emplace(nCPhysVol, physicalVolumeMappingID);
+        //Speichern   
+        int vol_col_id = 0;
+        int physVol = rmg_man->GetNtupleID(physVolRegister); 
+        ana_man->FillNtupleIColumn(physVol, vol_col_id++, physicalVolumeMappingID);
+        ana_man->FillNtupleSColumn(physVol, vol_col_id++, nCPhysVol);
+        ana_man->AddNtupleRow(physVol);
+      }
+
+      G4int physVolumeID = physVolumeMapping[nCPhysVol];
+      
+      if (materialMapping.find(nCMaterial) == materialMapping.end()) {
+        const G4int materialMappingID = materialMapping.size();
+        materialMapping.emplace(nCMaterial, materialMappingID);
+        // Speichern
+        int mat_col_id = 0;
+        int material = rmg_man->GetNtupleID(materialRegister);
+        ana_man->FillNtupleIColumn(material, mat_col_id++, materialMappingID);
+        ana_man->FillNtupleSColumn(material, mat_col_id++, nCMaterial);
+        ana_man->AddNtupleRow(material);
+      }
+
+      G4int materialID = materialMapping[nCMaterial];
+
       int col_id = 0;
+      
       ana_man->FillNtupleIColumn(ntupleid, col_id++, event->GetEventID());
       if (!fNtuplePerDetector) {
         ana_man->FillNtupleIColumn(ntupleid, col_id++, hit->detector_uid);
       }
       ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->photon_wavelength / u::nm);
       ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->global_time / u::ns);
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->photon_position.getX() / u::m);
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->photon_position.getY() / u::m);
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->photon_position.getZ() / u::m);
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->photon_momentum_direction.getX());
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->photon_momentum_direction.getY());
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->photon_momentum_direction.getZ());
+
+      // /fix also write away unique identifier and location
+      ana_man->FillNtupleIColumn(ntupleid, col_id++, hit->nC_track_id);
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->nC_pos.getX() / u::m);
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->nC_pos.getY() / u::m);
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->nC_pos.getZ() / u::m);
+      ana_man->FillNtupleIColumn(ntupleid, col_id++, physVolumeID);
+      ana_man->FillNtupleIColumn(ntupleid, col_id++, materialID);
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->nC_time / u::ns);
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->nC_gamma_total_energy / u::keV);
+      ana_man->FillNtupleIColumn(ntupleid, col_id++, hit->nC_fGe77);
+      ana_man->FillNtupleIColumn(ntupleid, col_id++, hit->nC_gamma_amount);
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->gamma_momentum_direction.getX());
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->gamma_momentum_direction.getY());
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->gamma_momentum_direction.getZ());
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->gamma_kinetic_energy / u::keV);
 
       // NOTE: must be called here for hit-oriented output
       ana_man->AddNtupleRow(ntupleid);

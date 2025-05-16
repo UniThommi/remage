@@ -27,6 +27,8 @@
 #include "RMGLog.hh"
 #include "RMGManager.hh"
 
+#include "MyTrackInfo.hh"
+
 G4ThreadLocal G4Allocator<RMGOpticalDetectorHit>* RMGOpticalDetectorHitAllocator = nullptr;
 
 // NOTE: does this make sense?
@@ -104,10 +106,53 @@ bool RMGOpticalDetector::ProcessHits(G4Step* step, G4TouchableHistory* /*history
   hit->detector_uid = det_uid;
   hit->photon_wavelength = CLHEP::c_light * CLHEP::h_Planck / step->GetTotalEnergyDeposit();
   hit->global_time = step->GetPostStepPoint()->GetGlobalTime();
+  hit->photon_position = step->GetPostStepPoint()->GetPosition();
+  hit->photon_momentum_direction = step->GetPostStepPoint()->GetMomentumDirection();
+
+  // Erhalte TrackInformation
+  const G4Track* track = step->GetTrack();
+  const auto* userInfo = track->GetUserInformation();
+  const auto* trackInfo = dynamic_cast<const MyTrackInfo*>(userInfo);
+  G4int lnC_track_id = -1;
+  G4ThreeVector lnC_pos = G4ThreeVector(-1., -1., -1.);
+  G4String lnC_phys_vol = "";
+  G4String lnC_material = "";
+  G4double lnC_time = -1.;
+  G4double lnC_gamma_total_energy = -1.;
+  G4bool lnC_fGe77 = -1;
+  G4int lnC_gamma_amount = -1;
+  G4ThreeVector lgamma_momentum_direction = G4ThreeVector(-1., -1., -1.);
+  G4double lgamma_kinetic_energy = -1.;
+  if (userInfo) {
+    MyTrackInfo* nonConstTrackInfo = const_cast<MyTrackInfo*>(trackInfo);
+    if (nonConstTrackInfo) {
+      lnC_track_id = nonConstTrackInfo->GetnCTrackID();
+      lnC_pos = nonConstTrackInfo->GetnCPos();
+      lnC_phys_vol = nonConstTrackInfo->GetnCPhysVol();
+      lnC_material = nonConstTrackInfo->GetnCMaterial();
+      lnC_time = nonConstTrackInfo->GetnCGammaAmount();
+      lnC_gamma_total_energy = nonConstTrackInfo->GetnCGammaTotalEnergy();
+      lnC_fGe77 = nonConstTrackInfo->GetnCfGe77();
+      lnC_gamma_amount = nonConstTrackInfo->GetnCGammaAmount();
+      lgamma_momentum_direction = nonConstTrackInfo->GetGammaMomentumDirection();
+      lgamma_kinetic_energy = nonConstTrackInfo->GetGammaKineticEnergy();
+    }
+  }
+
+  hit->nC_track_id = lnC_track_id;  
+  hit->nC_pos = lnC_pos;
+  hit->nC_phys_vol = lnC_phys_vol;
+  hit->nC_material = lnC_material;
+  hit->nC_time = lnC_time;
+  hit->nC_gamma_total_energy = lnC_gamma_total_energy;
+  hit->nC_fGe77 = lnC_fGe77;
+  hit->nC_gamma_amount = lnC_gamma_amount;
+  hit->gamma_momentum_direction = lgamma_momentum_direction;
+  hit->gamma_kinetic_energy = lgamma_kinetic_energy;
+
 
   // register the hit in the hit collection for the event
   fHitsCollection->insert(hit);
-
   return true;
 }
 

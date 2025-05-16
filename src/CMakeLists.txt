@@ -40,7 +40,8 @@ set(PROJECT_PUBLIC_HEADERS
     ${_root}/include/RMGVOutputScheme.hh
     ${_root}/include/RMGVVertexGenerator.hh
     ${_root}/include/RMGVertexOutputScheme.hh
-    ${_root}/include/RMGWorkerInitialization.hh)
+    ${_root}/include/RMGWorkerInitialization.hh
+    ${_root}/include/MyTrackInfo.hh)
 
 set(PROJECT_SOURCES
     ${_root}/src/RMGExceptionHandler.cc
@@ -72,7 +73,8 @@ set(PROJECT_SOURCES
     ${_root}/src/RMGUserAction.cc
     ${_root}/src/RMGVertexConfinement.cc
     ${_root}/src/RMGVertexFromFile.cc
-    ${_root}/src/RMGVertexOutputScheme.cc)
+    ${_root}/src/RMGVertexOutputScheme.cc
+    ${_root}/src/MyTrackInfo.cc)
 
 # Write RMGConfig.hh
 # no need to install, it is included in the header list above

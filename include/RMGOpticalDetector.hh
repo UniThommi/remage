@@ -48,6 +48,19 @@ class RMGOpticalDetectorHit : public G4VHit {
     int detector_uid = -1;
     float photon_wavelength = 0.;
     double global_time = -1;
+    G4ThreeVector photon_position;
+    G4ThreeVector photon_momentum_direction;
+
+    G4int nC_track_id = -1;
+    G4ThreeVector nC_pos; 
+    G4String nC_phys_vol = "";
+    G4String nC_material = "";
+    G4double nC_time = -1.;
+    G4double nC_gamma_total_energy = -1;
+    G4bool nC_fGe77 = -1;
+    G4int nC_gamma_amount = -1;
+    G4ThreeVector gamma_momentum_direction;
+    G4double gamma_kinetic_energy = -1;
 };
 
 using RMGOpticalDetectorHitsCollection = G4THitsCollection<RMGOpticalDetectorHit>;
