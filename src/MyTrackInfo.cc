@@ -15,7 +15,7 @@ MyTrackInfo::MyTrackInfo(
     G4int amount,
     G4double totalEnergy,
     G4bool fGe77,
-    G4double kineticEnergy
+    G4double kineticEnergy,
     G4ThreeVector momDir1, G4double kinE1,
     G4ThreeVector momDir2, G4double kinE2,
     G4ThreeVector momDir3, G4double kinE3,
