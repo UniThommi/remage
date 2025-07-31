@@ -63,8 +63,8 @@ void MyTrackInfo::SetnCGammaAmount(G4int amount) { this->nCGammaAmount = amount;
 G4double MyTrackInfo::GetnCGammaTotalEnergy() const { return this->nCGammaTotalEnergy; }
 void MyTrackInfo::SetnCGammaTotalEnergy(G4double totalEnergy) { this->nCGammaTotalEnergy = totalEnergy; } 
 
-G4double MyTrackInfo::GetGammaKineticEnergy() const { return this->photonGammaKineticEnergy; }
-void MyTrackInfo::SetGammaKineticEnergy(G4double kineticEnergy) { this->photonGammaKineticEnergy = kineticEnergy; }
+G4double MyTrackInfo::GetPhotonGammaKineticEnergy() const { return this->photonGammaKineticEnergy; }
+void MyTrackInfo::SetPhotonGammaKineticEnergy(G4double kineticEnergy) { this->photonGammaKineticEnergy = kineticEnergy; }
 
 const G4ThreeVector& MyTrackInfo::GetGammaMomentumDirection(size_t idx) const {
     return gammaMomentumDirections.at(idx);

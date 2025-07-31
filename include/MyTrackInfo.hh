@@ -51,7 +51,7 @@ public:
     G4double GetGammaKineticEnergy(size_t idx) const;
     void SetGammaKineticEnergy(size_t idx, G4double energy);
 
-    G4double GetPhotinGammaKineticEnergy() const;
+    G4double GetPhotonGammaKineticEnergy() const;
     void SetPhotonGammaKineticEnergy(G4double kineticEnergy);
 
 
