@@ -52,8 +52,7 @@ class RMGOpticalDetectorHit : public G4VHit {
     G4ThreeVector photon_momentum_direction;
 
     G4int nC_track_id = -1;
-    G4ThreeVector gamma_momentum_direction;
-    G4double gamma_kinetic_energy = -1;
+    G4double photon_gamma_kinetic_energy = -1;
 };
 
 using RMGOpticalDetectorHitsCollection = G4THitsCollection<RMGOpticalDetectorHit>;

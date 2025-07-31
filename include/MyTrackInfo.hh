@@ -45,11 +45,15 @@ public:
     G4double GetnCGammaTotalEnergy() const;
     void SetnCGammaTotalEnergy(G4double totalEnergy);
 
-    const G4ThreeVector& GetGammaMomentumDirection() const;
-    void SetGammaMomentumDirection(const G4ThreeVector& momentumDirection);
+    const G4ThreeVector& GetGammaMomentumDirection(size_t idx) const;
+    void SetGammaMomentumDirection(size_t idx, const G4ThreeVector& dir);
 
-    G4double GetGammaKineticEnergy() const;
-    void SetGammaKineticEnergy(G4double kineticEnergy);
+    G4double GetGammaKineticEnergy(size_t idx) const;
+    void SetGammaKineticEnergy(size_t idx, G4double energy);
+
+    G4double GetPhotinGammaKineticEnergy() const;
+    void SetPhotonGammaKineticEnergy(G4double kineticEnergy);
+
 
 private:
     G4int nCTrackID;
@@ -60,8 +64,9 @@ private:
     G4int nCGammaAmount;
     G4double nCGammaTotalEnergy;
     G4bool nCfGe77;
-    G4ThreeVector gammaMomentumDirection;
-    G4double gammaKineticEnergy;
+    std::array<G4ThreeVector, 4> gammaMomentumDirections;
+    std::array<G4double, 4> gammaKineticEnergies;
+    G4double photonGammaKineticEnergy;
     
 };
 

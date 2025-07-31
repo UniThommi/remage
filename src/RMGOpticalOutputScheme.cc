@@ -72,10 +72,7 @@ void RMGOpticalOutputScheme::AssignOutputNames(G4AnalysisManager* ana_man) {
     ana_man->CreateNtupleDColumn(id, "z_momentum_direction");
 
     ana_man->CreateNtupleIColumn(id, "nC_track_id");
-    ana_man->CreateNtupleDColumn(id, "gamma_x_momentum_direction");
-    ana_man->CreateNtupleDColumn(id, "gamma_y_momentum_direction");
-    ana_man->CreateNtupleDColumn(id, "gamma_z_momentum_direction");
-    ana_man->CreateNtupleDColumn(id, "gamma_kinetic_energy_in_keV");
+    ana_man->CreateNtupleDColumn(id, "photon_gamma_kinetic_energy_in_keV");
 
     ana_man->FinishNtuple(id);
   }
@@ -133,10 +130,7 @@ void RMGOpticalOutputScheme::StoreEvent(const G4Event* event) {
 
       // /fix also write away unique identifier and location
       ana_man->FillNtupleIColumn(ntupleid, col_id++, hit->nC_track_id);
-      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->gamma_momentum_direction.getX());
-      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->gamma_momentum_direction.getY());
-      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->gamma_momentum_direction.getZ());
-      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->gamma_kinetic_energy / u::keV);
+      ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->photon_gamma_kinetic_energy / u::keV);
 
       // NOTE: must be called here for hit-oriented output
       ana_man->AddNtupleRow(ntupleid);

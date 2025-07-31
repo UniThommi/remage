@@ -15,8 +15,11 @@ MyTrackInfo::MyTrackInfo(
     G4int amount,
     G4double totalEnergy,
     G4bool fGe77,
-    G4ThreeVector momentumDirection,
     G4double kineticEnergy
+    G4ThreeVector momDir1, G4double kinE1,
+    G4ThreeVector momDir2, G4double kinE2,
+    G4ThreeVector momDir3, G4double kinE3,
+    G4ThreeVector momDir4, G4double kinE4
 ) 
     : nCTrackID(trackID),
     nCPos(pos), 
@@ -26,9 +29,11 @@ MyTrackInfo::MyTrackInfo(
     nCGammaAmount(amount),
     nCGammaTotalEnergy(totalEnergy),
     nCfGe77(fGe77), 
-    gammaMomentumDirection(momentumDirection),
-    gammaKineticEnergy(kineticEnergy)
-    {}
+    photonGammaKineticEnergy(kineticEnergy)
+{
+    gammaMomentumDirections = {momDir1, momDir2, momDir3, momDir4};
+    gammaKineticEnergies = {kinE1, kinE2, kinE3, kinE4};
+}
 
 // Destructor
 MyTrackInfo::~MyTrackInfo() {}
@@ -58,9 +63,22 @@ void MyTrackInfo::SetnCGammaAmount(G4int amount) { this->nCGammaAmount = amount;
 G4double MyTrackInfo::GetnCGammaTotalEnergy() const { return this->nCGammaTotalEnergy; }
 void MyTrackInfo::SetnCGammaTotalEnergy(G4double totalEnergy) { this->nCGammaTotalEnergy = totalEnergy; } 
 
-const G4ThreeVector& MyTrackInfo::GetGammaMomentumDirection() const { return this->gammaMomentumDirection; }
-void MyTrackInfo::SetGammaMomentumDirection(const G4ThreeVector& momentumDirection) { this->gammaMomentumDirection = momentumDirection; }
+G4double MyTrackInfo::GetGammaKineticEnergy() const { return this->photonGammaKineticEnergy; }
+void MyTrackInfo::SetGammaKineticEnergy(G4double kineticEnergy) { this->photonGammaKineticEnergy = kineticEnergy; }
 
-G4double MyTrackInfo::GetGammaKineticEnergy() const { return this->gammaKineticEnergy; }
-void MyTrackInfo::SetGammaKineticEnergy(G4double kineticEnergy) { this->gammaKineticEnergy = kineticEnergy; }
+const G4ThreeVector& MyTrackInfo::GetGammaMomentumDirection(size_t idx) const {
+    return gammaMomentumDirections.at(idx);
+}
+
+G4double MyTrackInfo::GetGammaKineticEnergy(size_t idx) const {
+    return gammaKineticEnergies.at(idx);
+}
+
+void MyTrackInfo::SetGammaMomentumDirection(size_t idx, const G4ThreeVector& dir) {
+    gammaMomentumDirections.at(idx) = dir;
+}
+
+void MyTrackInfo::SetGammaKineticEnergy(size_t idx, G4double energy) {
+    gammaKineticEnergies.at(idx) = energy;
+}
 
