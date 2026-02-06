@@ -114,17 +114,17 @@ bool RMGOpticalDetector::ProcessHits(G4Step* step, G4TouchableHistory* /*history
   const auto* userInfo = track->GetUserInformation();
   const auto* trackInfo = dynamic_cast<const MyTrackInfo*>(userInfo);
   G4int lnC_track_id = -1;
-  G4double lphoton_gamma_kinetic_energy = -1.;
+  G4double lgamma_track_id = -1.;
   if (userInfo) {
     MyTrackInfo* nonConstTrackInfo = const_cast<MyTrackInfo*>(trackInfo);
     if (nonConstTrackInfo) {
-      lnC_track_id = nonConstTrackInfo->GetnCTrackID();
-      lphoton_gamma_kinetic_energy = nonConstTrackInfo->GetPhotonGammaKineticEnergy();
+      lnC_track_id = nonConstTrackInfo->GetNCID();
+      lgamma_track_id = nonConstTrackInfo->GetGammaID();
     }
   }
 
   hit->nC_track_id = lnC_track_id;  
-  hit->photon_gamma_kinetic_energy = lphoton_gamma_kinetic_energy;
+  hit->gamma_track_id = lgamma_track_id;
 
 
   // register the hit in the hit collection for the event
