@@ -113,16 +113,19 @@ bool RMGOpticalDetector::ProcessHits(G4Step* step, G4TouchableHistory* /*history
   const G4Track* track = step->GetTrack();
   const auto* userInfo = track->GetUserInformation();
   const auto* trackInfo = dynamic_cast<const MyTrackInfo*>(userInfo);
+  G4int lmuon_track_id = -1;
   G4int lnC_track_id = -1;
   G4double lgamma_track_id = -1.;
   if (userInfo) {
     MyTrackInfo* nonConstTrackInfo = const_cast<MyTrackInfo*>(trackInfo);
     if (nonConstTrackInfo) {
+      lmuon_track_id = nonConstTrackInfo->GetMuonID();
       lnC_track_id = nonConstTrackInfo->GetNCID();
       lgamma_track_id = nonConstTrackInfo->GetGammaID();
     }
   }
 
+  hit->muon_track_id = lmuon_track_id;  
   hit->nC_track_id = lnC_track_id;  
   hit->gamma_track_id = lgamma_track_id;
 

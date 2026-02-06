@@ -71,6 +71,7 @@ void RMGOpticalOutputScheme::AssignOutputNames(G4AnalysisManager* ana_man) {
     ana_man->CreateNtupleDColumn(id, "y_momentum_direction");
     ana_man->CreateNtupleDColumn(id, "z_momentum_direction");
 
+    ana_man->CreateNtupleIColumn(id, "muon_track_id");
     ana_man->CreateNtupleIColumn(id, "nC_track_id");
     ana_man->CreateNtupleDColumn(id, "gamma_track_id");
 
@@ -129,6 +130,7 @@ void RMGOpticalOutputScheme::StoreEvent(const G4Event* event) {
       ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->photon_momentum_direction.getZ());
 
       // /fix also write away unique identifier and location
+      ana_man->FillNtupleIColumn(ntupleid, col_id++, hit->muon_track_id);
       ana_man->FillNtupleIColumn(ntupleid, col_id++, hit->nC_track_id);
       ana_man->FillNtupleDColumn(ntupleid, col_id++, hit->gamma_track_id);
 

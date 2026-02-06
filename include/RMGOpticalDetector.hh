@@ -51,6 +51,7 @@ class RMGOpticalDetectorHit : public G4VHit {
     G4ThreeVector photon_position;
     G4ThreeVector photon_momentum_direction;
 
+    G4int muon_track_id = -1;
     G4int nC_track_id = -1;
     G4double gamma_track_id = -1;
 };

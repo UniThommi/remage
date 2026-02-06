@@ -5,8 +5,11 @@
 
 class MyTrackInfo : public G4VUserTrackInformation {
 public:
-    explicit MyTrackInfo(G4int ncID = -1, G4int gammaID = -1);
+    explicit MyTrackInfo(G4int muonID = -1, G4int ncID = -1, G4int gammaID = -1);
     ~MyTrackInfo() override;
+
+    G4int GetMuonID() const;
+    void SetMuonID(G4int muonID);
 
     G4int GetNCID() const;
     void SetNCID(G4int ncID);
@@ -15,6 +18,7 @@ public:
     void SetGammaID(G4int gammaID);
 
 private:
+    G4int fMuonID; 
     G4int fNCID;
     G4int fGammaID;
 };
